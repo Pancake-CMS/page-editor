@@ -1,0 +1,49 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../polymerfire/firebase-document.html">
+<link rel="import" href="../css-grid/css-grid.html">
+
+<dom-module id="page-editor">
+    <template>
+        <style type="text/css">
+            :host {
+                display: none;
+            }
+            :host([active]){
+                display: block;
+            }
+        </style>
+        <firebase-document></firebase-document>
+
+        <css-grid
+            path="/"
+            rawcomponents="{{templatecomponents}}"
+            in-edit-mode="[[inEditMode]]">
+        </css-grid>
+    </template>
+    <script>
+        Polymer({
+            is: 'page-editor',
+
+            properties: {
+                inEditMode: {
+                    type: Boolean,
+                    value: false,
+                    notify: true
+                },
+
+                templatecomponents: {
+                    type: Object,
+                    notify: true,
+                    reflectToAttribute: false,
+                    computed: '_computeTemplateComponents(routeData, subroute)'
+                }
+            },
+
+            _computeTemplateComponents: function(routeData, subroute) {
+                var path = '/pages/' + routeData + subroute;
+                console.log(path);
+                return null;
+            }
+        })
+    </script>
+</dom-module>
