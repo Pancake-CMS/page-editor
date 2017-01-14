@@ -31,18 +31,33 @@
                     notify: true
                 },
 
+                routedata: {
+                    type: Object,
+                    notify: true,
+                    observer: '_routedataChanged'
+                },
+
                 templatecomponents: {
                     type: Object,
                     notify: true,
                     reflectToAttribute: false,
-                    computed: '_computeTemplateComponents(routeData, subroute)'
+                    value: {}
                 }
             },
 
-            _computeTemplateComponents: function(routeData, subroute) {
-                var path = '/pages/' + routeData + subroute;
-                console.log(path);
-                return null;
+            _routedataChanged: function() {
+                var path = '/pages/' + this.routedata.locale + '/' + this.routedata.name;
+                this.set('templatecomponents', {});
+                this.async( () => {
+                    this.$$('firebase-document').getStoredValue(path)
+                    .then((data) => {
+                        return this.$$('firebase-document').getStoredValue('/templates/' + data.template);
+                    })
+                    .then((data) => {
+                        this.set('templatecomponents', data);
+                    });
+                });
+
             }
         })
     </script>
