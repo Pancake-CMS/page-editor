@@ -13,13 +13,16 @@
             }
         </style>
         <firebase-document></firebase-document>
+        <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
 
         <css-grid
             path="/"
             rawcomponents="{{templatecomponents}}"
-            in-edit-mode="[[inEditMode]]">
+            in-edit-mode="[[inEditMode]]"
+            in-content-mode="[[inContentMode]]">
         </css-grid>
     </template>
+
     <script>
         Polymer({
             is: 'page-editor',
@@ -28,6 +31,12 @@
                 inEditMode: {
                     type: Boolean,
                     value: false,
+                    notify: true
+                },
+
+                inContentMode: {
+                    type: Boolean,
+                    value: true,
                     notify: true
                 },
 
