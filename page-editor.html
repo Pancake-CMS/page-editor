@@ -1,6 +1,9 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../polymerfire/firebase-document.html">
 <link rel="import" href="../css-grid/css-grid.html">
+<link rel="import" href="../paper-fab/paper-fab.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../iron-icons/image-icons.html">
 
 <dom-module id="page-editor">
     <template>
@@ -11,6 +14,11 @@
             :host([active]){
                 display: block;
             }
+            .preview {
+                position: fixed;
+                bottom: 50px;
+                right: 50px;
+            }
         </style>
         <firebase-document></firebase-document>
 
@@ -20,6 +28,8 @@
             in-edit-mode="[[inEditMode]]"
             in-content-mode="[[inContentMode]]">
         </css-grid>
+
+        <paper-fab class="preview" icon="image:remove-red-eye" on-click="_enterPreviewMode"></paper-fab>
     </template>
 
     <script>
@@ -50,6 +60,13 @@
                     notify: true,
                     reflectToAttribute: false,
                     value: {}
+                },
+
+                inPreviewMode: {
+                    type: Boolean,
+                    notify: true,
+                    value: false,
+                    reflectToAttribute: false
                 }
             },
 
@@ -65,7 +82,21 @@
                         this.set('templatecomponents', data);
                     });
                 });
+            },
 
+            _enterPreviewMode: function() {
+                this.inPreviewMode = !this.inPreviewMode;
+                if(this.inPreviewMode) {
+                    tinymce.EditorManager.editors.forEach(function(element) {
+                        element.show();
+                        element.hide();
+                    });
+                } else {
+                    tinymce.EditorManager.editors.forEach(function(element) {
+                        element.hide();
+                        element.show();
+                    });
+                }
             }
         })
     </script>
