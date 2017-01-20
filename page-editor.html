@@ -4,6 +4,7 @@
 <link rel="import" href="../paper-fab/paper-fab.html">
 <link rel="import" href="../iron-icons/iron-icons.html">
 <link rel="import" href="../iron-icons/image-icons.html">
+<link rel="import" href="../page-operator/page-operator.html">
 
 <dom-module id="page-editor">
     <template>
@@ -17,10 +18,16 @@
             .preview {
                 position: fixed;
                 bottom: 50px;
+                right: 150px;
+            }
+            .save  {
+                position: fixed;
+                bottom: 50px;
                 right: 50px;
             }
         </style>
         <firebase-document></firebase-document>
+        <page-operator name="[[routedata.name]]"></page-operator>
 
         <css-grid
             path="/"
@@ -30,6 +37,7 @@
         </css-grid>
 
         <paper-fab class="preview" icon="image:remove-red-eye" on-click="_enterPreviewMode"></paper-fab>
+        <paper-fab class="save" icon="icons:save" on-click="_sendDataForSave"></paper-fab>
     </template>
 
     <script>
@@ -97,7 +105,13 @@
                         element.show();
                     });
                 }
+            },
+
+            _sendDataForSave: function() {
+                tinymce.EditorManager.editors.forEach(function(element) {
+                    element.fire('save');
+                });
             }
-        })
+        });
     </script>
 </dom-module>
