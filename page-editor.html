@@ -94,12 +94,27 @@
                     this.$$('firebase-document').getStoredValue(path)
                     .then((data) => {
                         this.templateName = data.template;
+                        this.contentData = data.components;
                         return this.$$('firebase-document').getStoredValue('/templates/' + data.template);
                     })
                     .then((data) => {
-                        this.set('templatecomponents', data);
+                        if(!!this.contentData) {
+                            var mergedData = this._handleContent(data, this.contentData);
+                            this.set('templatecomponents', mergedData);
+                        } else {
+                             this.set('templatecomponents', data);
+                        }
                     });
                 });
+            },
+
+            _handleContent: function(obj1, obj2) {
+                Object.keys(obj2).forEach((key) => {
+                    obj1[key]['usercontent'] = obj2[key]['usercontent'] || {};
+                    // TODO : Add nested user content. Refer <review-page>
+                });
+
+                return obj1;
             },
 
             _getPath: function() {
