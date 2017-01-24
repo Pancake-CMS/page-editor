@@ -28,7 +28,7 @@
             }
         </style>
         <firebase-document></firebase-document>
-        <page-operator locale="[[routedata.locale]]" name="[[routedata.name]]"></page-operator>
+        <page-operator locale="[[routedata.locale]]" name="[[routedata.name]]" template-name="[[templateName]]"></page-operator>
 
         <css-grid
             path="/"
@@ -78,21 +78,32 @@
                     notify: true,
                     value: false,
                     reflectToAttribute: false
+                },
+
+                templateName: {
+                    type: String,
+                    notify: true,
+                    reflectToAttribute: false
                 }
             },
 
             _routedataChanged: function() {
-                var path = '/pages/' + this.routedata.locale + '/' + this.routedata.name;
+                var path = '/pages/' + this._getPath();
                 this.set('templatecomponents', {});
                 this.async( () => {
                     this.$$('firebase-document').getStoredValue(path)
                     .then((data) => {
+                        this.templateName = data.template;
                         return this.$$('firebase-document').getStoredValue('/templates/' + data.template);
                     })
                     .then((data) => {
                         this.set('templatecomponents', data);
                     });
                 });
+            },
+
+            _getPath: function() {
+                return this.routedata.locale + '/' + this.routedata.name;
             },
 
             _enterPreviewMode: function() {
@@ -111,10 +122,16 @@
             },
 
             _sendDataForSave: function() {
-                tinymce.EditorManager.editors.forEach(function(element) {
-                    element.fire('save');
+                var path = '/approvals/pages/' + this._getPath();
+
+                this.$$('firebase-document').setStoredValue(path + '/template', this.templateName)
+                .then(() => {
+                    tinymce.EditorManager.editors.forEach(function(element) {
+                        element.fire('save');
+                    });
+                    this.$$('paper-toast').open();
                 });
-                this.$$('paper-toast').open();
+
             }
         });
     </script>
