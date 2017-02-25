@@ -145,6 +145,10 @@
                     tinymce.EditorManager.editors.forEach(function(element) {
                         element.fire('save');
                     });
+                    this.fire('iron-signal', {
+                        name: 'attribute-save',
+                        data: null
+                    });
                     this.$$('paper-toast').open();
                 });
 
